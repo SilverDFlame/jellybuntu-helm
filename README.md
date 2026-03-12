@@ -5,7 +5,7 @@ All cluster state is declared in this repo — Flux automatically reconciles cha
 
 **Related Repositories:**
 
-- [SilverDFlame/jellybuntu](https://github.com/SilverDFlame/jellybuntu) — Ansible-based Proxmox homelab automation
+- [SilverDFlame/jellybuntu](https://github.com/SilverDFlame/jellybuntu) — Ansible-based Proxmox homelab automation (private)
 - [SilverDFlame/jellybuntu-wiki](https://github.com/SilverDFlame/jellybuntu-wiki) — Infrastructure documentation
 
 ## Deployed Infrastructure
