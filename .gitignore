@@ -1,0 +1,17 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Zed
+.zed/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Editor backup/swap files
+*~
+*.swp
+*.swo
