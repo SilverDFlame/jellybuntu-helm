@@ -6,3 +6,9 @@ resources:
   - secrets.yaml
   - nfs-media-pv.yaml
   - nfs-media-pvc.yaml
+  - sonarr.yaml
+  - radarr.yaml
+  - lidarr.yaml
+  - prowlarr.yaml
+  - jellyseerr.yaml
+  - bazarr.yaml

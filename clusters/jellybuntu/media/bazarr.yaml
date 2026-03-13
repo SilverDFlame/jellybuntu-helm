@@ -1,0 +1,56 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: bazarr
+  namespace: media
+  labels:
+    app.kubernetes.io/part-of: jellybuntu
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  values:
+    defaultPodOptions:
+      nodeSelector:
+        jellybuntu.io/role: media
+
+    controllers:
+      main:
+        containers:
+          app:
+            image:
+              repository: lscr.io/linuxserver/bazarr
+              tag: latest
+            env:
+              PUID: "1000"
+              PGID: "1000"
+              TZ: America/Chicago
+            resources:
+              requests:
+                memory: 256Mi
+              limits:
+                memory: 512Mi
+
+    service:
+      app:
+        controller: main
+        ports:
+          http:
+            port: 6767
+
+    persistence:
+      config:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClassName: nfs-client
+        globalMounts:
+          - path: /config
+      media:
+        type: persistentVolumeClaim
+        existingClaim: nfs-media
+        globalMounts:
+          - path: /data
