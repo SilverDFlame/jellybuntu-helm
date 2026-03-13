@@ -15,4 +15,5 @@ resources:
   - navidrome.yaml
   - byparr.yaml
   - recyclarr.yaml
+  - recyclarr-configmap.yaml
   - ingress.yaml

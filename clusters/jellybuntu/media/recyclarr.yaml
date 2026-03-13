@@ -45,3 +45,10 @@ spec:
         storageClassName: nfs-client
         globalMounts:
           - path: /config
+      recyclarr-config:
+        type: configMap
+        name: recyclarr-config
+        globalMounts:
+          - path: /config/recyclarr.yml
+            subPath: recyclarr.yml
+            readOnly: true

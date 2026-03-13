@@ -19,6 +19,30 @@ spec:
 
     controllers:
       main:
+        initContainers:
+          init-config:
+            image:
+              repository: docker.io/library/busybox
+              tag: latest
+            command:
+              - sh
+              - -c
+              - |
+                if [ ! -f /config/config.xml ]; then
+                  cat > /config/config.xml <<XMLEOF
+                <Config>
+                  <PostgresUser>radarr</PostgresUser>
+                  <PostgresPassword>${MEDIA_POSTGRES_PASSWORD}</PostgresPassword>
+                  <PostgresHost>192.168.30.16</PostgresHost>
+                  <PostgresPort>5432</PostgresPort>
+                  <PostgresMainDb>radarr_main</PostgresMainDb>
+                  <PostgresLogDb>radarr_log</PostgresLogDb>
+                </Config>
+                XMLEOF
+                fi
+            envFrom:
+              - secretRef:
+                  name: media-secrets
         containers:
           app:
             image:
