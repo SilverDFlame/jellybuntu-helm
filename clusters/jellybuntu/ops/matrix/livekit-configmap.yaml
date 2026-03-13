@@ -19,7 +19,7 @@ data:
     rtc:
       tcp_port: 7881
       port_range_start: 50000
-      port_range_end: 50060
+      port_range_end: 50020
       # k8s-ops node IP for ICE candidates
       node_ip: 192.168.30.44
       use_external_ip: false

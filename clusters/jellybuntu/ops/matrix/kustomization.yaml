@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - secrets.yaml
+  - synapse-signing-key-secrets.yaml
   - synapse-configmap.yaml
   - synapse-log-configmap.yaml
   - livekit-configmap.yaml

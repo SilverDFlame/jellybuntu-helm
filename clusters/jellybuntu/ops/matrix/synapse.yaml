@@ -63,8 +63,18 @@ spec:
         type: persistentVolumeClaim
         accessMode: ReadWriteOnce
         size: 10Gi
+        storageClassName: nfs-client
         globalMounts:
           - path: /data
+      signing-key:
+        type: secret
+        name: synapse-signing-key
+        advancedMounts:
+          main:
+            app:
+              - path: /data/chat.elysium.industries.signing.key
+                subPath: signing.key
+                readOnly: true
       config-template:
         type: configMap
         name: synapse-config

@@ -25,7 +25,8 @@ spec:
               repository: ghcr.io/element-hq/lk-jwt-service
               tag: "0.4.1"
             env:
-              LIVEKIT_URL: http://livekit.matrix.svc.cluster.local:7880
+              LIVEKIT_URL: ws://livekit.matrix.svc.cluster.local:7880
+              LIVEKIT_FULL_ACCESS_HOMESERVERS: "chat.elysium.industries"
               LIVEKIT_KEY:
                 valueFrom:
                   secretKeyRef:
