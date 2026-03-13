@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-media
+  namespace: media
+  labels:
+    app.kubernetes.io/part-of: jellybuntu
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  volumeName: nfs-media
+  resources:
+    requests:
+      storage: 1Ti

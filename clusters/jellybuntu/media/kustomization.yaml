@@ -1,5 +1,8 @@
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-resources: []
-# Workload HelmReleases will be added here during service migration
+resources:
+  - namespace.yaml
+  - secrets.yaml
+  - nfs-media-pv.yaml
+  - nfs-media-pvc.yaml
