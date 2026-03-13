@@ -8,6 +8,6 @@ metadata:
     app.kubernetes.io/part-of: jellybuntu
 spec:
   interval: 1h
-  url: oci://ghcr.io/bjw-s-labs/helm
+  url: oci://ghcr.io/bjw-s-labs/helm/app-template
   ref:
     semver: "4.x"
