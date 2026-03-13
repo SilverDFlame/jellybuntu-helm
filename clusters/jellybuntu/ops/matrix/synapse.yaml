@@ -1,0 +1,88 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: synapse
+  namespace: matrix
+  labels:
+    app.kubernetes.io/part-of: jellybuntu
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  values:
+    defaultPodOptions:
+      nodeSelector:
+        jellybuntu.io/role: ops
+
+    controllers:
+      main:
+        initContainers:
+          envsubst:
+            image:
+              repository: docker.io/library/alpine
+              tag: "3.21"
+            command:
+              - sh
+              - -c
+              - |
+                apk add --no-cache gettext > /dev/null 2>&1
+                envsubst < /config-template/synapse-secrets.yaml > /config/synapse-secrets.yaml
+            envFrom:
+              - secretRef:
+                  name: matrix-secrets
+        containers:
+          app:
+            image:
+              repository: ghcr.io/element-hq/synapse
+              tag: v1.147.1
+            args:
+              - run
+              - --config-path=/data/homeserver.yaml
+              - --config-path=/config/synapse-secrets.yaml
+            envFrom:
+              - secretRef:
+                  name: matrix-secrets
+            resources:
+              requests:
+                memory: 2Gi
+              limits:
+                memory: 4Gi
+
+    service:
+      app:
+        controller: main
+        ports:
+          http:
+            port: 8008
+
+    persistence:
+      data:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 10Gi
+        globalMounts:
+          - path: /data
+      config-template:
+        type: configMap
+        name: synapse-config
+        globalMounts:
+          - path: /data/homeserver.yaml
+            subPath: homeserver.yaml
+            readOnly: true
+          - path: /config-template/synapse-secrets.yaml
+            subPath: synapse-secrets.yaml
+            readOnly: true
+      log-config:
+        type: configMap
+        name: synapse-log-config
+        globalMounts:
+          - path: /config/synapse-log.config
+            subPath: synapse-log.config
+            readOnly: true
+      config:
+        type: emptyDir
+        globalMounts:
+          - path: /config

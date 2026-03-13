@@ -9,9 +9,12 @@ metadata:
 data:
   livekit.yaml: |
     # LiveKit SFU Configuration (k8s)
-    # API keys injected via LIVEKIT_KEYS env var in HelmRelease
+    # API keys rendered by envsubst init container
 
     port: 7880
+
+    keys:
+      ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
 
     rtc:
       tcp_port: 7881

@@ -8,3 +8,8 @@ resources:
   - synapse-log-configmap.yaml
   - livekit-configmap.yaml
   - coturn-configmap.yaml
+  - synapse.yaml
+  - livekit.yaml
+  - lk-jwt.yaml
+  - synapse-admin.yaml
+  - coturn.yaml
