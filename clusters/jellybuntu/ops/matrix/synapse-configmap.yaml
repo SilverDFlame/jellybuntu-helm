@@ -1,0 +1,132 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: synapse-config
+  namespace: matrix
+  labels:
+    app.kubernetes.io/part-of: jellybuntu
+data:
+  homeserver.yaml: |
+    # Synapse Homeserver Configuration (k8s)
+    # Secrets are injected via synapse-secrets.yaml overlay
+
+    server_name: "chat.elysium.industries"
+    public_baseurl: "https://chat.elysium.industries/"
+    pid_file: /data/homeserver.pid
+    signing_key_path: "/data/chat.elysium.industries.signing.key"
+
+    # Listeners
+    listeners:
+      - port: 8008
+        tls: false
+        type: http
+        x_forwarded: true
+        resources:
+          - names: [client, federation]
+            compress: false
+
+    # Database — PostgreSQL on dedicated DB VM
+    database:
+      name: psycopg2
+      args:
+        user: synapse
+        database: synapse
+        host: 192.168.30.16
+        port: 5432
+        cp_min: 5
+        cp_max: 10
+
+    # Logging
+    log_config: "/config/synapse-log.config"
+
+    # Media storage
+    media_store_path: /data/media_store
+    max_upload_size: 50M
+    url_preview_enabled: true
+    url_preview_ip_range_blacklist:
+      - '127.0.0.0/8'
+      - '10.0.0.0/8'
+      - '172.16.0.0/12'
+      - '192.168.0.0/16'
+      - '100.64.0.0/10'
+      - '169.254.0.0/16'
+      - '::1/128'
+      - 'fe80::/64'
+      - 'fc00::/7'
+
+    # Remote media retention
+    media_retention:
+      remote_media_lifetime: 90d
+
+    # Registration
+    enable_registration: false
+
+    # Federation — disabled (internal use only)
+    federation_domain_whitelist: []
+
+    # TURN server for WebRTC NAT traversal
+    turn_uris:
+      - "turn:k8s-ops.discus-moth.ts.net:3478?transport=udp"
+      - "turn:k8s-ops.discus-moth.ts.net:3478?transport=tcp"
+    turn_user_lifetime: 3600000
+    turn_allow_guests: false
+
+    # MatrixRTC / Element Call experimental features
+    experimental_features:
+      msc3266_enabled: true
+      msc4222_enabled: true
+      msc4143_enabled: true
+
+    # MSC4140: Delayed events
+    max_event_delay_duration: 24h
+
+    # Rate limiting tuned for MatrixRTC
+    rc_message:
+      per_second: 0.5
+      burst_count: 30
+
+    rc_delayed_event_mgmt:
+      per_second: 1
+      burst_count: 20
+
+    # Login rate limiting
+    rc_login:
+      address:
+        per_second: 0.5
+        burst_count: 10
+      account:
+        per_second: 0.5
+        burst_count: 10
+      failed_attempts:
+        per_second: 0.5
+        burst_count: 10
+
+    # MatrixRTC
+    matrix_rtc:
+      transports:
+        - type: "livekit"
+          livekit_service_url: "https://lk-jwt.elysium.industries"
+
+    # Well-known client discovery
+    serve_client_wellknown: true
+    serve_server_wellknown: true
+    extra_well_known_client_content:
+      "org.matrix.msc4143.rtc_foci":
+        - type: "livekit"
+          livekit_service_url: "https://lk-jwt.elysium.industries"
+
+    report_stats: false
+    suppress_key_server_warning: true
+
+  synapse-secrets.yaml: |
+    # Secret overlay — values injected from environment variables by
+    # init container before Synapse starts. See HelmRelease for details.
+    database:
+      name: psycopg2
+      args:
+        password: "${POSTGRES_PASSWORD}"
+    registration_shared_secret: "${REGISTRATION_SHARED_SECRET}"
+    macaroon_secret_key: "${SYNAPSE_SHARED_SECRET}"
+    form_secret: "${FORM_SECRET}"
+    turn_shared_secret: "${COTURN_AUTH_SECRET}"
