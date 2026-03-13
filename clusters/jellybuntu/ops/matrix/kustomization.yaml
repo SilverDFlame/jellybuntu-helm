@@ -13,3 +13,4 @@ resources:
   - lk-jwt.yaml
   - synapse-admin.yaml
   - coturn.yaml
+  - ingress.yaml
