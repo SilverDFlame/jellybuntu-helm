@@ -12,3 +12,6 @@ resources:
   - prowlarr.yaml
   - jellyseerr.yaml
   - bazarr.yaml
+  - navidrome.yaml
+  - byparr.yaml
+  - recyclarr.yaml
