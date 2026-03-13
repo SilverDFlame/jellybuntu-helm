@@ -1,0 +1,105 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: qbittorrent
+  namespace: media
+  labels:
+    app.kubernetes.io/part-of: jellybuntu
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  values:
+    defaultPodOptions:
+      nodeSelector:
+        jellybuntu.io/role: media
+
+    controllers:
+      main:
+        containers:
+          app:
+            image:
+              repository: lscr.io/linuxserver/qbittorrent
+              tag: latest
+            env:
+              PUID: "1000"
+              PGID: "1000"
+              TZ: America/Chicago
+              WEBUI_PORT: "8080"
+            resources:
+              requests:
+                memory: 1Gi
+              limits:
+                memory: 2Gi
+          gluetun:
+            image:
+              repository: docker.io/qmcgaw/gluetun
+              tag: v3.41.0
+            env:
+              VPN_SERVICE_PROVIDER: "private internet access"
+              VPN_TYPE: openvpn
+              SERVER_REGIONS: "US East"
+              VPN_PORT_FORWARDING: "on"
+              VPN_PORT_FORWARDING_PROVIDER: "private internet access"
+              FIREWALL_OUTBOUND_SUBNETS: "10.42.0.0/16,10.43.0.0/16,192.168.30.0/24,100.64.0.0/10"
+              FIREWALL_INPUT_PORTS: "8080"
+              DOT: "off"
+              LOG_LEVEL: info
+            envFrom:
+              - secretRef:
+                  name: vpn-credentials
+            securityContext:
+              capabilities:
+                add:
+                  - NET_ADMIN
+
+    service:
+      app:
+        controller: main
+        ports:
+          http:
+            port: 8080
+
+    persistence:
+      config:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClassName: nfs-client
+        advancedMounts:
+          main:
+            app:
+              - path: /config
+      gluetun-data:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 256Mi
+        storageClassName: nfs-client
+        advancedMounts:
+          main:
+            gluetun:
+              - path: /gluetun
+      media:
+        type: persistentVolumeClaim
+        existingClaim: nfs-media
+        advancedMounts:
+          main:
+            app:
+              - path: /data
+      ramdisk:
+        type: hostPath
+        hostPath: /mnt/ramdisk/downloads
+        advancedMounts:
+          main:
+            app:
+              - path: /ramdisk
+      tun:
+        type: hostPath
+        hostPath: /dev/net/tun
+        advancedMounts:
+          main:
+            gluetun:
+              - path: /dev/net/tun

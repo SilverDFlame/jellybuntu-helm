@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - secrets.yaml
+  - vpn-secrets.yaml
   - nfs-media-pv.yaml
   - nfs-media-pvc.yaml
   - sonarr.yaml
@@ -16,4 +17,7 @@ resources:
   - byparr.yaml
   - recyclarr.yaml
   - recyclarr-configmap.yaml
+  - qbittorrent.yaml
+  - sabnzbd.yaml
+  - unpackerr.yaml
   - ingress.yaml
