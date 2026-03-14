@@ -9,7 +9,7 @@ metadata:
 data:
   homeserver.yaml: |
     # Synapse Homeserver Configuration (k8s)
-    # Secrets are injected via synapse-secrets.yaml overlay
+    # Secret placeholders (${...}) are expanded by envsubst init container.
 
     server_name: "chat.elysium.industries"
     public_baseurl: "https://chat.elysium.industries/"
@@ -31,6 +31,7 @@ data:
       name: psycopg2
       args:
         user: synapse
+        password: "${POSTGRES_PASSWORD}"
         database: synapse
         host: 192.168.30.16
         port: 5432
@@ -116,17 +117,11 @@ data:
         - type: "livekit"
           livekit_service_url: "https://lk-jwt.elysium.industries"
 
-    report_stats: false
-    suppress_key_server_warning: true
-
-  synapse-secrets.yaml: |
-    # Secret overlay — values injected from environment variables by
-    # init container before Synapse starts. See HelmRelease for details.
-    database:
-      name: psycopg2
-      args:
-        password: "${POSTGRES_PASSWORD}"
+    # Secrets (placeholders expanded by envsubst init container)
     registration_shared_secret: "${REGISTRATION_SHARED_SECRET}"
     macaroon_secret_key: "${SYNAPSE_SHARED_SECRET}"
     form_secret: "${FORM_SECRET}"
     turn_shared_secret: "${COTURN_AUTH_SECRET}"
+
+    report_stats: false
+    suppress_key_server_warning: true

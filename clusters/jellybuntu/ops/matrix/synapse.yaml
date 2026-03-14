@@ -29,7 +29,7 @@ spec:
               - -c
               - |
                 apk add --no-cache gettext > /dev/null 2>&1
-                envsubst < /config-template/synapse-secrets.yaml > /config/synapse-secrets.yaml
+                envsubst < /config-template/homeserver.yaml > /config/homeserver.yaml
             envFrom:
               - secretRef:
                   name: matrix-secrets
@@ -45,8 +45,7 @@ spec:
                 add: [CHOWN, SETUID, SETGID]
             args:
               - run
-              - --config-path=/data/homeserver.yaml
-              - --config-path=/config/synapse-secrets.yaml
+              - --config-path=/config/homeserver.yaml
             envFrom:
               - secretRef:
                   name: matrix-secrets
@@ -84,11 +83,8 @@ spec:
         type: configMap
         name: synapse-config
         globalMounts:
-          - path: /data/homeserver.yaml
+          - path: /config-template/homeserver.yaml
             subPath: homeserver.yaml
-            readOnly: true
-          - path: /config-template/synapse-secrets.yaml
-            subPath: synapse-secrets.yaml
             readOnly: true
       log-config:
         type: configMap
