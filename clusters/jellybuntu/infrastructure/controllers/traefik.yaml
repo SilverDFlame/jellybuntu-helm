@@ -31,25 +31,27 @@ spec:
         port: 8443
         exposedPort: 443
         protocol: TCP
-        tls:
-          enabled: true
-          certResolver: letsencrypt
-          domains:
-            - main: "elysium.industries"
-              sans:
-                - "*.elysium.industries"
+        http:
+          tls:
+            enabled: true
+            certResolver: letsencrypt
+            domains:
+              - main: "elysium.industries"
+                sans:
+                  - "*.elysium.industries"
 
     # ACME certificate resolver (Let's Encrypt + Cloudflare DNS-01)
-    certResolvers:
+    certificatesResolvers:
       letsencrypt:
-        email: "admin@elysium.industries"
-        storage: /data/acme.json
-        caServer: "https://acme-v02.api.letsencrypt.org/directory"
-        dnsChallenge:
-          provider: cloudflare
-          resolvers:
-            - "1.1.1.1:53"
-            - "8.8.8.8:53"
+        acme:
+          email: "admin@elysium.industries"
+          storage: /data/acme.json
+          caServer: "https://acme-v02.api.letsencrypt.org/directory"
+          dnsChallenge:
+            provider: cloudflare
+            resolvers:
+              - "1.1.1.1:53"
+              - "8.8.8.8:53"
 
     # Cloudflare API token from secret
     envFrom:
@@ -64,6 +66,16 @@ spec:
       size: 128Mi
       storageClass: nfs-client
       path: /data
+
+    # Init container to set acme.json permissions (required by Traefik)
+    deployment:
+      initContainers:
+        - name: volume-permissions
+          image: docker.io/library/busybox:1.37
+          command: ["sh", "-c", "touch /data/acme.json && chmod 600 /data/acme.json"]
+          volumeMounts:
+            - mountPath: /data
+              name: data
 
     # TLS options
     tlsOptions:
