@@ -1,0 +1,50 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: lk-jwt
+  namespace: matrix
+  labels:
+    app.kubernetes.io/part-of: jellybuntu
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: flux-system
+  values:
+    defaultPodOptions:
+      nodeSelector:
+        jellybuntu.io/role: ops
+
+    controllers:
+      main:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/element-hq/lk-jwt-service
+              tag: "0.4.1"
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: [ALL]
+            env:
+              LIVEKIT_URL: ws://livekit.matrix.svc.cluster.local:7880
+              LIVEKIT_FULL_ACCESS_HOMESERVERS: "chat.elysium.industries"
+              LIVEKIT_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: matrix-secrets
+                    key: LIVEKIT_API_KEY
+              LIVEKIT_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: matrix-secrets
+                    key: LIVEKIT_API_SECRET
+
+    service:
+      app:
+        controller: main
+        ports:
+          http:
+            port: 8080

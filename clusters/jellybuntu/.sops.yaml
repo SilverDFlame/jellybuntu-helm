@@ -1,0 +1,13 @@
+---
+# SOPS creation rules for Flux decryption
+# Encrypted secrets are decrypted by Flux kustomize-controller using the age key
+#
+# Bootstrap: kubectl create secret generic sops-age \
+#   --namespace=flux-system \
+#   --from-file=age.agekey=$HOME/.config/sops/age/keys.txt
+
+creation_rules:
+  - path_regex: .*secrets.*\.yaml$
+    encrypted_regex: ^(data|stringData)$
+    age: >-
+      age1qt6zwvjzpvz8sed88tf3wj96t7694nnprnqdjls0w9vkxzzm6d8qag8snq

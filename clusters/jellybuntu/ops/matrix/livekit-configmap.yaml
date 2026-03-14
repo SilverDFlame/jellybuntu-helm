@@ -1,0 +1,32 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: livekit-config
+  namespace: matrix
+  labels:
+    app.kubernetes.io/part-of: jellybuntu
+data:
+  livekit.yaml: |
+    # LiveKit SFU Configuration (k8s)
+    # API keys rendered by envsubst init container
+
+    port: 7880
+
+    keys:
+      ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
+
+    rtc:
+      tcp_port: 7881
+      port_range_start: 50000
+      port_range_end: 50020
+      # k8s-ops node IP for ICE candidates
+      node_ip: 192.168.30.44
+      use_external_ip: false
+
+    logging:
+      level: info
+
+    room:
+      auto_create: true
+      max_participants: 20

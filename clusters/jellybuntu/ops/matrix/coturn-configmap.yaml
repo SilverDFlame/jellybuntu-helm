@@ -1,0 +1,46 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coturn-config
+  namespace: matrix
+  labels:
+    app.kubernetes.io/part-of: jellybuntu
+data:
+  turnserver.conf: |
+    # coturn TURN/STUN Configuration (k8s — hostNetwork on k8s-ops)
+    # Auth secret injected via envsubst init container
+
+    listening-port=3478
+
+    # Relay port range
+    min-port=49152
+    max-port=49200
+
+    # Static auth secret (placeholder — rendered by init container)
+    use-auth-secret
+    static-auth-secret=${COTURN_AUTH_SECRET}
+
+    # Server realm
+    realm=k8s-ops.discus-moth.ts.net
+
+    # Network — k8s-ops node IP (VLAN 30)
+    listening-ip=0.0.0.0
+    relay-ip=192.168.30.44
+    external-ip=192.168.30.44
+
+    # Logging
+    log-file=stdout
+
+    # Security — deny relay to private IP ranges
+    denied-peer-ip=10.0.0.0-10.255.255.255
+    denied-peer-ip=172.16.0.0-172.31.255.255
+    denied-peer-ip=192.168.0.0-192.168.255.255
+    denied-peer-ip=100.64.0.0-100.127.255.255
+
+    # Allow relay to our own node IP only
+    allowed-peer-ip=192.168.30.44
+
+    fingerprint
+    no-multicast-peers
+    no-cli

@@ -1,0 +1,13 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: admin-ipallowlist
+  namespace: media
+  labels:
+    app.kubernetes.io/part-of: jellybuntu
+spec:
+  ipAllowList:
+    sourceRange:
+      - 192.168.30.0/24
+      - 100.64.0.0/10
