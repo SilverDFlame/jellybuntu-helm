@@ -21,6 +21,8 @@ spec:
   values:
     service:
       type: LoadBalancer
+      spec:
+        externalTrafficPolicy: Local
 
     ports:
       web:
