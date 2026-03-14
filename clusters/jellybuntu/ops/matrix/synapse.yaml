@@ -67,7 +67,7 @@ spec:
         type: persistentVolumeClaim
         accessMode: ReadWriteOnce
         size: 10Gi
-        storageClassName: nfs-client
+        storageClass: nfs-client
         globalMounts:
           - path: /data
       signing-key:
