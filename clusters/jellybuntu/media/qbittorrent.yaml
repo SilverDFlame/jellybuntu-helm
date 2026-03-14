@@ -29,6 +29,11 @@ spec:
               PGID: "1000"
               TZ: America/Chicago
               WEBUI_PORT: "8080"
+              SERVICES_ADMIN_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: media-secrets
+                    key: SERVICES_ADMIN_PASSWORD
             resources:
               requests:
                 memory: 1Gi
@@ -48,6 +53,12 @@ spec:
               DOT: "off"
               UPDATER_PERIOD: "24h"
               LOG_LEVEL: info
+              VPN_PORT_FORWARDING_UP_COMMAND: >-
+                /bin/sh -c 'curl -s -X POST
+                -H "Referer: http://127.0.0.1:8080"
+                -d "json={\"listen_port\":{{PORTS}},\"upnp\":false,\"random_port\":false}"
+                http://127.0.0.1:8080/api/v2/app/setPreferences
+                && echo "Port {{PORTS}} synced to qBittorrent"'
             envFrom:
               - secretRef:
                   name: vpn-credentials
@@ -103,6 +114,9 @@ spec:
         advancedMounts:
           main:
             app:
-              - path: /custom-cont-init.d/01-patch-qbittorrent-config.sh
-                subPath: 01-patch-qbittorrent-config.sh
+              - path: /custom-cont-init.d/01-patch-config.sh
+                subPath: 01-patch-config.sh
+                readOnly: true
+              - path: /custom-services.d/02-set-password/run
+                subPath: 02-set-password.sh
                 readOnly: true

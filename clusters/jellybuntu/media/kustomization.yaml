@@ -18,9 +18,26 @@ resources:
   - recyclarr.yaml
   - recyclarr-configmap.yaml
   - qbittorrent.yaml
-  - qbittorrent-init-configmap.yaml
   - sabnzbd.yaml
-  - sabnzbd-init-configmap.yaml
   - unpackerr.yaml
   - middleware.yaml
   - ingress.yaml
+
+configMapGenerator:
+  - name: qbittorrent-init
+    namespace: media
+    files:
+      - scripts/qbittorrent/01-patch-config.sh
+      - scripts/qbittorrent/02-set-password.sh
+    options:
+      disableNameSuffixHash: true
+      labels:
+        app.kubernetes.io/part-of: jellybuntu
+  - name: sabnzbd-init
+    namespace: media
+    files:
+      - scripts/sabnzbd/01-patch-config.sh
+    options:
+      disableNameSuffixHash: true
+      labels:
+        app.kubernetes.io/part-of: jellybuntu
