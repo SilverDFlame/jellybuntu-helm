@@ -10,4 +10,4 @@ spec:
   interval: 1h
   url: oci://ghcr.io/bjw-s-labs/helm/app-template
   ref:
-    semver: "4.x"
+    semver: "4.6.x"

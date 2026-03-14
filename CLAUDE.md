@@ -75,11 +75,12 @@ media, gpu, net, ops (all depend on infrastructure)
 
 ### Namespace Management
 
-Namespaces **must be pre-created** in `infrastructure/controllers/namespaces.yaml` before HelmReleases reference them. The kustomize-controller cannot apply HelmRelease objects into non-existent namespaces. HelmReleases also set `install.createNamespace: true` as a fallback.
+Namespaces **must be pre-created** before HelmReleases reference them. Infrastructure namespaces live in `infrastructure/controllers/namespaces.yaml`. Application layer namespaces (e.g., `media`, `matrix`) are defined in their own layer directory as `namespace.yaml` and listed first in the layer's `kustomization.yaml`.
 
 ### Naming Patterns
 
-- Namespace format: `{service}-system` (e.g., `metallb-system`, `traefik-system`)
+- Infrastructure/controller namespaces: `{service}-system` (e.g., `metallb-system`, `traefik-system`, `nfs-system`)
+- Application workload namespaces: bare names (e.g., `media`, `matrix`)
 - All resources labeled: `app.kubernetes.io/part-of: jellybuntu`
 - Flux Kustomizations named by layer: `infrastructure`, `media`, `gpu`, `net`, `ops`
 

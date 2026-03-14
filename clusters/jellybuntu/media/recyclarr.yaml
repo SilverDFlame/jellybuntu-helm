@@ -29,6 +29,10 @@ spec:
             image:
               repository: docker.io/recyclarr/recyclarr
               tag: "7.5.2"
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: [ALL]
             args:
               - sync
             env:

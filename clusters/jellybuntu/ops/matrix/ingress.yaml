@@ -29,6 +29,8 @@ spec:
   routes:
     - match: Host(`synapse-admin.elysium.industries`)
       kind: Rule
+      middlewares:
+        - name: admin-ipallowlist
       services:
         - name: synapse-admin
           port: 8080

@@ -22,4 +22,5 @@ resources:
   - sabnzbd.yaml
   - sabnzbd-init-configmap.yaml
   - unpackerr.yaml
+  - middleware.yaml
   - ingress.yaml

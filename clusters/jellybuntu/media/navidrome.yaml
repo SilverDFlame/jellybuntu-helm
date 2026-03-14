@@ -24,6 +24,10 @@ spec:
             image:
               repository: ghcr.io/navidrome/navidrome
               tag: "0.60.3"
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: [ALL]
             env:
               ND_SCANSCHEDULE: "1h"
               ND_LOGLEVEL: info

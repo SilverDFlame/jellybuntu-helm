@@ -47,7 +47,7 @@ data:
     config.set("misc", "host_whitelist",
         "sabnzbd.elysium.industries, sabnzbd, localhost, 127.0.0.1")
     config.set("misc", "local_ranges",
-        "10.42.0.0/16, 10.43.0.0/16, 100.64.0.0/10, 192.168.0.0/16, 172.16.0.0/12")
+        "10.42.0.0/16, 10.43.0.0/16, 100.64.0.0/10, 192.168.30.0/24")
 
     # --- API key ---
     if api_key:

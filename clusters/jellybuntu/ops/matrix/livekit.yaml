@@ -38,6 +38,10 @@ spec:
             image:
               repository: docker.io/livekit/livekit-server
               tag: v1.9.9
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: [ALL]
             args:
               - --config=/config/livekit.yaml
             ports:

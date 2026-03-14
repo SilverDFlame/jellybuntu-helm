@@ -38,6 +38,10 @@ spec:
             image:
               repository: ghcr.io/element-hq/synapse
               tag: v1.147.1
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: [ALL]
             args:
               - run
               - --config-path=/data/homeserver.yaml

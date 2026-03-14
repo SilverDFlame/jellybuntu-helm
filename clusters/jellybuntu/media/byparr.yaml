@@ -24,6 +24,10 @@ spec:
             image:
               repository: ghcr.io/thephaseless/byparr
               tag: "2.1.0"
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: [ALL]
             env:
               LOG_LEVEL: info
             resources:

@@ -12,6 +12,8 @@ spec:
   routes:
     - match: Host(`sonarr.elysium.industries`)
       kind: Rule
+      middlewares:
+        - name: admin-ipallowlist
       services:
         - name: sonarr
           port: 8989
@@ -29,6 +31,8 @@ spec:
   routes:
     - match: Host(`radarr.elysium.industries`)
       kind: Rule
+      middlewares:
+        - name: admin-ipallowlist
       services:
         - name: radarr
           port: 7878
@@ -46,6 +50,8 @@ spec:
   routes:
     - match: Host(`lidarr.elysium.industries`)
       kind: Rule
+      middlewares:
+        - name: admin-ipallowlist
       services:
         - name: lidarr
           port: 8686
@@ -63,6 +69,8 @@ spec:
   routes:
     - match: Host(`prowlarr.elysium.industries`)
       kind: Rule
+      middlewares:
+        - name: admin-ipallowlist
       services:
         - name: prowlarr
           port: 9696
@@ -97,6 +105,8 @@ spec:
   routes:
     - match: Host(`bazarr.elysium.industries`)
       kind: Rule
+      middlewares:
+        - name: admin-ipallowlist
       services:
         - name: bazarr
           port: 6767
@@ -131,6 +141,8 @@ spec:
   routes:
     - match: Host(`byparr.elysium.industries`)
       kind: Rule
+      middlewares:
+        - name: admin-ipallowlist
       services:
         - name: byparr
           port: 8191
@@ -148,6 +160,8 @@ spec:
   routes:
     - match: Host(`qbittorrent.elysium.industries`)
       kind: Rule
+      middlewares:
+        - name: admin-ipallowlist
       services:
         - name: qbittorrent
           port: 8080
@@ -165,6 +179,8 @@ spec:
   routes:
     - match: Host(`sabnzbd.elysium.industries`)
       kind: Rule
+      middlewares:
+        - name: admin-ipallowlist
       services:
         - name: sabnzbd
           port: 8080
