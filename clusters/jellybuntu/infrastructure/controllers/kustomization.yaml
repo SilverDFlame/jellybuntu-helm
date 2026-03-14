@@ -5,4 +5,5 @@ resources:
   - namespaces.yaml
   - metallb.yaml
   - traefik.yaml
+  - traefik-secrets.yaml
   - nfs-subdir.yaml
