@@ -42,6 +42,7 @@ spec:
               allowPrivilegeEscalation: false
               capabilities:
                 drop: [ALL]
+                add: [CHOWN, SETUID, SETGID]
             args:
               - run
               - --config-path=/data/homeserver.yaml
