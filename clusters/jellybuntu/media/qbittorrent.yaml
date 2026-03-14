@@ -89,13 +89,6 @@ spec:
           main:
             app:
               - path: /data
-      ramdisk:
-        type: hostPath
-        hostPath: /mnt/ramdisk/downloads
-        advancedMounts:
-          main:
-            app:
-              - path: /ramdisk
       tun:
         type: hostPath
         hostPath: /dev/net/tun
@@ -103,3 +96,13 @@ spec:
           main:
             gluetun:
               - path: /dev/net/tun
+      init-scripts:
+        type: configMap
+        name: qbittorrent-init
+        defaultMode: 0755
+        advancedMounts:
+          main:
+            app:
+              - path: /custom-cont-init.d/01-patch-qbittorrent-config.sh
+                subPath: 01-patch-qbittorrent-config.sh
+                readOnly: true

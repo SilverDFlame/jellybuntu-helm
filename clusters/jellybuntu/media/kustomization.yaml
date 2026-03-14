@@ -18,6 +18,8 @@ resources:
   - recyclarr.yaml
   - recyclarr-configmap.yaml
   - qbittorrent.yaml
+  - qbittorrent-init-configmap.yaml
   - sabnzbd.yaml
+  - sabnzbd-init-configmap.yaml
   - unpackerr.yaml
   - ingress.yaml
