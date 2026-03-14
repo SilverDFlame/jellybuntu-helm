@@ -19,6 +19,9 @@ spec:
   install:
     createNamespace: true
   values:
+    nodeSelector:
+      jellybuntu.io/role: net
+
     service:
       type: LoadBalancer
       spec:
