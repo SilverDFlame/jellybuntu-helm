@@ -28,6 +28,7 @@ spec:
               allowPrivilegeEscalation: false
               capabilities:
                 drop: [ALL]
+                add: [CHOWN]
 
     service:
       app:

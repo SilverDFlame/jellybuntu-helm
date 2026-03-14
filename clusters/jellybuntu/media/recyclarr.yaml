@@ -46,7 +46,7 @@ spec:
         type: persistentVolumeClaim
         accessMode: ReadWriteOnce
         size: 256Mi
-        storageClassName: nfs-client
+        storageClass: nfs-client
         globalMounts:
           - path: /config
       recyclarr-config:

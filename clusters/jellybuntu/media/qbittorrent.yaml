@@ -68,7 +68,7 @@ spec:
         type: persistentVolumeClaim
         accessMode: ReadWriteOnce
         size: 1Gi
-        storageClassName: nfs-client
+        storageClass: nfs-client
         advancedMounts:
           main:
             app:
@@ -77,7 +77,7 @@ spec:
         type: persistentVolumeClaim
         accessMode: ReadWriteOnce
         size: 256Mi
-        storageClassName: nfs-client
+        storageClass: nfs-client
         advancedMounts:
           main:
             gluetun:

@@ -48,6 +48,6 @@ spec:
         type: persistentVolumeClaim
         accessMode: ReadWriteOnce
         size: 1Gi
-        storageClassName: nfs-client
+        storageClass: nfs-client
         globalMounts:
           - path: /config
