@@ -55,10 +55,10 @@ spec:
               LOG_LEVEL: info
               VPN_PORT_FORWARDING_UP_COMMAND: >-
                 /bin/sh -c 'wget -qO- --post-data
-                "json={\"listen_port\":$VPN_PORT_FORWARDING_PORT,\"upnp\":false,\"random_port\":false}"
+                "json={\"listen_port\":{{ "{{" }}PORTS{{ "}}" }},\"upnp\":false,\"random_port\":false}"
                 --header="Referer: http://127.0.0.1:8080"
                 http://127.0.0.1:8080/api/v2/app/setPreferences
-                && echo "Port $VPN_PORT_FORWARDING_PORT synced to qBittorrent"'
+                && echo "Port {{ "{{" }}PORTS{{ "}}" }} synced to qBittorrent"'
             envFrom:
               - secretRef:
                   name: vpn-credentials
