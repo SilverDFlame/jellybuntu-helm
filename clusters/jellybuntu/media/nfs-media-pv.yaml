@@ -18,3 +18,5 @@ spec:
   mountOptions:
     - hard
     - nfsvers=4
+    - noexec
+    - nosuid

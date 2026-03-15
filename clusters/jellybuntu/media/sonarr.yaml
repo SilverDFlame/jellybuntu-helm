@@ -40,9 +40,12 @@ spec:
                 </Config>
                 XMLEOF
                 fi
-            envFrom:
-              - secretRef:
-                  name: media-secrets
+            env:
+              MEDIA_POSTGRES_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: media-secrets
+                    key: MEDIA_POSTGRES_PASSWORD
         containers:
           app:
             image:
@@ -52,9 +55,6 @@ spec:
               PUID: "1000"
               PGID: "1000"
               TZ: America/Chicago
-            envFrom:
-              - secretRef:
-                  name: media-secrets
             resources:
               requests:
                 memory: 512Mi
