@@ -29,6 +29,7 @@ configMapGenerator:
     files:
       - scripts/qbittorrent/01-patch-config.sh
       - scripts/qbittorrent/02-set-password.sh
+      - scripts/qbittorrent/03-port-sync.sh
     options:
       disableNameSuffixHash: true
       labels:
