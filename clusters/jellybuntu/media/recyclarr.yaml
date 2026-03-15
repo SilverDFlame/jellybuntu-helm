@@ -22,6 +22,18 @@ spec:
         type: cronjob
         cronjob:
           schedule: "0 4 * * *"
+        initContainers:
+          fix-git-ownership:
+            image:
+              repository: docker.io/library/alpine
+              tag: "3.21"
+            command:
+              - sh
+              - -c
+              - |
+                apk add --no-cache git >/dev/null 2>&1
+                git config --global --add safe.directory '*'
+                cp ~/.gitconfig /config/.gitconfig 2>/dev/null || true
         containers:
           app:
             image:
@@ -35,6 +47,8 @@ spec:
               - sync
             env:
               TZ: America/Chicago
+              HOME: /config
+              GIT_CONFIG_GLOBAL: /config/.gitconfig
             envFrom:
               - secretRef:
                   name: media-secrets
