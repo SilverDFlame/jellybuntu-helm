@@ -33,6 +33,41 @@ spec:
                   secretKeyRef:
                     name: media-secrets
                     key: SABNZBD_API_KEY
+              SERVICES_ADMIN_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: media-secrets
+                    key: SERVICES_ADMIN_PASSWORD
+              NEWSHOSTING_USERNAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: media-secrets
+                    key: NEWSHOSTING_USERNAME
+              NEWSHOSTING_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: media-secrets
+                    key: NEWSHOSTING_PASSWORD
+              NEWSHOSTING_CONNECTIONS:
+                valueFrom:
+                  secretKeyRef:
+                    name: media-secrets
+                    key: NEWSHOSTING_CONNECTIONS
+              GIGANEWS_USERNAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: media-secrets
+                    key: GIGANEWS_USERNAME
+              GIGANEWS_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: media-secrets
+                    key: GIGANEWS_PASSWORD
+              GIGANEWS_CONNECTIONS:
+                valueFrom:
+                  secretKeyRef:
+                    name: media-secrets
+                    key: GIGANEWS_CONNECTIONS
             resources:
               requests:
                 memory: 1Gi
@@ -66,4 +101,7 @@ spec:
         globalMounts:
           - path: /custom-cont-init.d/01-patch-config.sh
             subPath: 01-patch-config.sh
+            readOnly: true
+          - path: /custom-cont-init.d/02-configure-api.sh
+            subPath: 02-configure-api.sh
             readOnly: true
