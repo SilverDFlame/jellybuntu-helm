@@ -2,23 +2,17 @@
 # Patches sabnzbd.ini with required settings on every container start.
 # Runs as a LSIO custom-cont-init.d script (root, before service starts).
 #
-# First boot: sabnzbd.ini doesn't exist yet (SABnzbd generates it on first
-# run). We skip patching and let SABnzbd create its default config. After
-# initial WebUI setup, all subsequent restarts will apply these patches.
+# First boot: sabnzbd.ini doesn't exist yet. We launch a background process
+# that waits for SABnzbd to generate its default config, patches it, and
+# restarts SABnzbd via s6. Subsequent boots patch the existing config directly.
 
 set -euo pipefail
 
 CONFIG="/config/sabnzbd.ini"
-
-if [ ! -f "$CONFIG" ]; then
-  echo "[sabnzbd-init] No config found (first boot) — skipping patches"
-  exit 0
-fi
-
-# Read API key from mounted secret (env var set via k8s secret)
 API_KEY="${SABNZBD_API_KEY:-}"
 
-python3 << 'PYEOF'
+patch_config() {
+  python3 << 'PYEOF'
 import configparser
 import os
 
@@ -33,7 +27,6 @@ if not config.has_section("misc"):
     config.add_section("misc")
 
 # --- Access control ---
-# Allow WebUI access from Traefik ingress, k8s pod network, and direct access
 config.set("misc", "host_whitelist",
     "sabnzbd.elysium.industries, sabnzbd, localhost, 127.0.0.1")
 config.set("misc", "local_ranges",
@@ -66,3 +59,24 @@ with open(cfg, "w") as f:
 
 print("[sabnzbd-init] Config patched successfully")
 PYEOF
+}
+
+if [ -f "$CONFIG" ]; then
+  # Normal path: config exists, patch it before SABnzbd starts
+  patch_config
+else
+  # First boot: wait for SABnzbd to generate config, then patch and restart
+  echo "[sabnzbd-init] First boot — will patch config after SABnzbd generates it"
+  (
+    # Wait for SABnzbd to create its default config
+    while [ ! -f "$CONFIG" ]; do
+      sleep 2
+    done
+    # Give SABnzbd a moment to finish writing
+    sleep 3
+
+    patch_config
+    echo "[sabnzbd-init] Restarting SABnzbd with patched config..."
+    s6-svc -r /var/run/service/svc-sabnzbd
+  ) &
+fi
