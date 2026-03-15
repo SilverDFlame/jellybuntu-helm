@@ -53,12 +53,6 @@ spec:
               DOT: "off"
               UPDATER_PERIOD: "24h"
               LOG_LEVEL: info
-              VPN_PORT_FORWARDING_UP_COMMAND: >-
-                /bin/sh -c 'wget -qO- --post-data
-                "json={\"listen_port\":{{ "{{" }}PORTS{{ "}}" }},\"upnp\":false,\"random_port\":false}"
-                --header="Referer: http://127.0.0.1:8080"
-                http://127.0.0.1:8080/api/v2/app/setPreferences
-                && echo "Port {{ "{{" }}PORTS{{ "}}" }} synced to qBittorrent"'
             envFrom:
               - secretRef:
                   name: vpn-credentials
@@ -66,6 +60,20 @@ spec:
               capabilities:
                 add:
                   - NET_ADMIN
+          port-sync:
+            image:
+              repository: docker.io/library/alpine
+              tag: "3.21"
+            command:
+              - /bin/sh
+              - -c
+              - apk add --no-cache inotify-tools >/dev/null 2>&1 && exec /scripts/03-port-sync.sh
+            resources:
+              requests:
+                cpu: 10m
+                memory: 32Mi
+              limits:
+                memory: 64Mi
 
     service:
       app:
@@ -100,6 +108,15 @@ spec:
           main:
             app:
               - path: /data
+      gluetun-tmp:
+        type: emptyDir
+        advancedMounts:
+          main:
+            gluetun:
+              - path: /tmp/gluetun
+            port-sync:
+              - path: /tmp/gluetun
+                readOnly: true
       tun:
         type: hostPath
         hostPath: /dev/net/tun
@@ -119,4 +136,8 @@ spec:
                 readOnly: true
               - path: /custom-cont-init.d/02-set-password.sh
                 subPath: 02-set-password.sh
+                readOnly: true
+            port-sync:
+              - path: /scripts/03-port-sync.sh
+                subPath: 03-port-sync.sh
                 readOnly: true
