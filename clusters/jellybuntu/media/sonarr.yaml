@@ -37,8 +37,13 @@ spec:
                   <PostgresPort>5432</PostgresPort>
                   <PostgresMainDb>sonarr_main</PostgresMainDb>
                   <PostgresLogDb>sonarr_log</PostgresLogDb>
+                  <ApiKey>${SONARR_API_KEY}</ApiKey>
                 </Config>
                 XMLEOF
+                elif ! grep -q '<ApiKey>' /config/config.xml; then
+                  sed -i 's|</Config>|  <ApiKey>'"${SONARR_API_KEY}"'</ApiKey>\n</Config>|' /config/config.xml
+                else
+                  sed -i 's|<ApiKey>.*</ApiKey>|<ApiKey>'"${SONARR_API_KEY}"'</ApiKey>|' /config/config.xml
                 fi
             env:
               MEDIA_POSTGRES_PASSWORD:
@@ -46,6 +51,11 @@ spec:
                   secretKeyRef:
                     name: media-secrets
                     key: MEDIA_POSTGRES_PASSWORD
+              SONARR_API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: media-secrets
+                    key: SONARR_API_KEY
         containers:
           app:
             image:
