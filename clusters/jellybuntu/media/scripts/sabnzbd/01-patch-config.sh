@@ -1,80 +1,39 @@
 #!/bin/bash
-# Patches sabnzbd.ini with required settings on every container start.
-# Runs as a LSIO custom-cont-init.d script (root, before service starts).
-#
-# First boot: sabnzbd.ini doesn't exist yet. We launch a background process
-# that waits for SABnzbd to generate its default config, patches it, and
-# restarts SABnzbd via s6. Subsequent boots patch the existing config directly.
-
-set -euo pipefail
+# Patches sabnzbd.ini on every container start.
+# First boot: waits for SABnzbd to generate config, patches, restarts via s6.
 
 CONFIG="/config/sabnzbd.ini"
 API_KEY="${SABNZBD_API_KEY:-}"
 
 patch_config() {
-  python3 << 'PYEOF'
-import configparser
-import os
+  sed -i 's/^host_whitelist *=.*/host_whitelist = sabnzbd.elysium.industries, sabnzbd, localhost, 127.0.0.1/' "$CONFIG"
+  sed -i 's/^local_ranges *=.*/local_ranges = 10.42.0.0\/16, 10.43.0.0\/16, 100.64.0.0\/10, 192.168.30.0\/24/' "$CONFIG"
 
-cfg = "/config/sabnzbd.ini"
-api_key = os.environ.get("SABNZBD_API_KEY", "")
+  if [ -n "$API_KEY" ]; then
+    sed -i "s/^api_key *=.*/api_key = $API_KEY/" "$CONFIG"
+  fi
 
-config = configparser.RawConfigParser()
-config.optionxform = str  # preserve case
-config.read(cfg)
+  sed -i 's|^download_dir *=.*|download_dir = /data/usenet/incomplete|' "$CONFIG"
+  sed -i 's|^complete_dir *=.*|complete_dir = /data/usenet|' "$CONFIG"
+  sed -i 's/^bandwidth_max *=.*/bandwidth_max = 40M/' "$CONFIG"
+  sed -i 's/^fulldisk_autoresume *=.*/fulldisk_autoresume = 1/' "$CONFIG"
+  sed -i 's/^download_free *=.*/download_free = 3G/' "$CONFIG"
+  sed -i 's/^top_only *=.*/top_only = 1/' "$CONFIG"
+  sed -i 's/^pre_check *=.*/pre_check = 1/' "$CONFIG"
+  sed -i 's/^enable_unrar *=.*/enable_unrar = 0/' "$CONFIG"
+  sed -i 's/^enable_7zip *=.*/enable_7zip = 0/' "$CONFIG"
+  sed -i 's/^direct_unpack *=.*/direct_unpack = 0/' "$CONFIG"
 
-if not config.has_section("misc"):
-    config.add_section("misc")
-
-# --- Access control ---
-config.set("misc", "host_whitelist",
-    "sabnzbd.elysium.industries, sabnzbd, localhost, 127.0.0.1")
-config.set("misc", "local_ranges",
-    "10.42.0.0/16, 10.43.0.0/16, 100.64.0.0/10, 192.168.30.0/24")
-
-# --- API key ---
-if api_key:
-    config.set("misc", "api_key", api_key)
-
-# --- Download paths (NAS via NFS, no ramdisk) ---
-config.set("misc", "download_dir", "/data/usenet/incomplete")
-config.set("misc", "complete_dir", "/data/usenet")
-
-# --- Bandwidth limit (40 MB/s) ---
-config.set("misc", "bandwidth_max", "40M")
-
-# --- Queue behavior ---
-config.set("misc", "fulldisk_autoresume", "1")
-config.set("misc", "download_free", "3G")
-config.set("misc", "top_only", "1")
-config.set("misc", "pre_check", "1")
-
-# --- Disable built-in unpacking (Unpackerr handles extraction) ---
-config.set("misc", "enable_unrar", "0")
-config.set("misc", "enable_7zip", "0")
-config.set("misc", "direct_unpack", "0")
-
-with open(cfg, "w") as f:
-    config.write(f)
-
-print("[sabnzbd-init] Config patched successfully")
-PYEOF
+  echo "[sabnzbd-init] Config patched successfully"
 }
 
 if [ -f "$CONFIG" ]; then
-  # Normal path: config exists, patch it before SABnzbd starts
   patch_config
 else
-  # First boot: wait for SABnzbd to generate config, then patch and restart
-  echo "[sabnzbd-init] First boot — will patch config after SABnzbd generates it"
+  echo "[sabnzbd-init] First boot — will patch after config is generated"
   (
-    # Wait for SABnzbd to create its default config
-    while [ ! -f "$CONFIG" ]; do
-      sleep 2
-    done
-    # Give SABnzbd a moment to finish writing
+    while [ ! -f "$CONFIG" ]; do sleep 2; done
     sleep 3
-
     patch_config
     echo "[sabnzbd-init] Restarting SABnzbd with patched config..."
     s6-svc -r /var/run/service/svc-sabnzbd
