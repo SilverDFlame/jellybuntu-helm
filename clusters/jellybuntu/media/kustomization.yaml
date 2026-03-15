@@ -38,6 +38,7 @@ configMapGenerator:
     namespace: media
     files:
       - scripts/sabnzbd/01-patch-config.sh
+      - scripts/sabnzbd/02-configure-api.sh
     options:
       disableNameSuffixHash: true
       labels:
