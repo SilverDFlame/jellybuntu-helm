@@ -28,6 +28,11 @@ spec:
               PUID: "1000"
               PGID: "1000"
               TZ: America/Chicago
+              MEDIA_POSTGRES_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: media-secrets
+                    key: MEDIA_POSTGRES_PASSWORD
             resources:
               requests:
                 memory: 256Mi
@@ -54,3 +59,11 @@ spec:
         existingClaim: nfs-media
         globalMounts:
           - path: /data
+      init-scripts:
+        type: configMap
+        name: bazarr-init
+        defaultMode: 0755
+        globalMounts:
+          - path: /custom-cont-init.d/postgres-config.sh
+            subPath: postgres-config.sh
+            readOnly: true

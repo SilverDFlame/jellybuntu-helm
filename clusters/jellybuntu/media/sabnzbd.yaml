@@ -99,9 +99,9 @@ spec:
         name: sabnzbd-init
         defaultMode: 0755
         globalMounts:
-          - path: /custom-cont-init.d/01-patch-config.sh
-            subPath: 01-patch-config.sh
+          - path: /custom-cont-init.d/patch-config.sh
+            subPath: patch-config.sh
             readOnly: true
-          - path: /custom-cont-init.d/02-configure-api.sh
-            subPath: 02-configure-api.sh
+          - path: /custom-cont-init.d/configure-api.sh
+            subPath: configure-api.sh
             readOnly: true

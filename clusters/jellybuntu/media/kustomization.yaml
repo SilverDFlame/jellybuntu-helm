@@ -27,9 +27,9 @@ configMapGenerator:
   - name: qbittorrent-init
     namespace: media
     files:
-      - scripts/qbittorrent/01-patch-config.sh
-      - scripts/qbittorrent/02-set-password.sh
-      - scripts/qbittorrent/03-port-sync.sh
+      - scripts/qbittorrent/patch-config.sh
+      - scripts/qbittorrent/set-password.sh
+      - scripts/qbittorrent/port-sync.sh
     options:
       disableNameSuffixHash: true
       labels:
@@ -37,8 +37,24 @@ configMapGenerator:
   - name: sabnzbd-init
     namespace: media
     files:
-      - scripts/sabnzbd/01-patch-config.sh
-      - scripts/sabnzbd/02-configure-api.sh
+      - scripts/sabnzbd/patch-config.sh
+      - scripts/sabnzbd/configure-api.sh
+    options:
+      disableNameSuffixHash: true
+      labels:
+        app.kubernetes.io/part-of: jellybuntu
+  - name: prowlarr-init
+    namespace: media
+    files:
+      - scripts/prowlarr/postgres-config.sh
+    options:
+      disableNameSuffixHash: true
+      labels:
+        app.kubernetes.io/part-of: jellybuntu
+  - name: bazarr-init
+    namespace: media
+    files:
+      - scripts/bazarr/postgres-config.sh
     options:
       disableNameSuffixHash: true
       labels:
