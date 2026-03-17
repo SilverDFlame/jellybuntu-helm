@@ -131,13 +131,13 @@ spec:
         advancedMounts:
           main:
             app:
-              - path: /custom-cont-init.d/01-patch-config.sh
-                subPath: 01-patch-config.sh
+              - path: /custom-cont-init.d/patch-config.sh
+                subPath: patch-config.sh
                 readOnly: true
-              - path: /custom-cont-init.d/02-set-password.sh
-                subPath: 02-set-password.sh
+              - path: /custom-cont-init.d/set-password.sh
+                subPath: set-password.sh
                 readOnly: true
             port-sync:
-              - path: /scripts/03-port-sync.sh
-                subPath: 03-port-sync.sh
+              - path: /scripts/port-sync.sh
+                subPath: port-sync.sh
                 readOnly: true

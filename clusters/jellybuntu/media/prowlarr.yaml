@@ -28,6 +28,16 @@ spec:
               PUID: "1000"
               PGID: "1000"
               TZ: America/Chicago
+              MEDIA_POSTGRES_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: media-secrets
+                    key: MEDIA_POSTGRES_PASSWORD
+              PROWLARR_API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: media-secrets
+                    key: PROWLARR_API_KEY
             resources:
               requests:
                 memory: 256Mi
@@ -49,3 +59,11 @@ spec:
         storageClass: nfs-client
         globalMounts:
           - path: /config
+      init-scripts:
+        type: configMap
+        name: prowlarr-init
+        defaultMode: 0755
+        globalMounts:
+          - path: /custom-cont-init.d/postgres-config.sh
+            subPath: postgres-config.sh
+            readOnly: true
