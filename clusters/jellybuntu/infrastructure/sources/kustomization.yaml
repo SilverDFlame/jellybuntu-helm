@@ -7,3 +7,4 @@ resources:
   - traefik.yaml
   - metallb.yaml
   - nfs-subdir.yaml
+  - nvidia.yaml

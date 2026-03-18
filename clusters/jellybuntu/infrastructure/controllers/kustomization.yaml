@@ -7,3 +7,4 @@ resources:
   - traefik.yaml
   - traefik-secrets.yaml
   - nfs-subdir.yaml
+  - nvidia-device-plugin.yaml
