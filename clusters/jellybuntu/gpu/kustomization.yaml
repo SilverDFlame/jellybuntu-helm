@@ -5,6 +5,7 @@ resources:
   - namespace.yaml
   - nfs-media-pv.yaml
   - nfs-media-pvc.yaml
+  - middleware.yaml
   - jellyfin.yaml
   - tdarr.yaml
   - ingress.yaml
