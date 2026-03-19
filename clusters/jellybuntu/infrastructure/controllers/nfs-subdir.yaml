@@ -20,8 +20,8 @@ spec:
     createNamespace: true
   values:
     nfs:
-      server: "192.168.30.15"
-      path: /mnt/storage/data
+      server: "192.168.30.4"
+      path: /mnt/k8s-config
     storageClass:
       name: nfs-client
       defaultClass: true
