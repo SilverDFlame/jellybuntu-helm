@@ -8,3 +8,4 @@ resources:
   - traefik-secrets.yaml
   - nfs-subdir.yaml
   - nvidia-device-plugin.yaml
+  - coredns-custom.yaml

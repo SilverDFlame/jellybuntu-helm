@@ -1,0 +1,18 @@
+---
+# Forward elysium.industries DNS queries to AdGuard (NAS VM)
+# Fixes in-cluster resolution of private domains like chat.elysium.industries
+# that only exist in AdGuard, not public DNS.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns-custom
+  namespace: kube-system
+  labels:
+    app.kubernetes.io/part-of: jellybuntu
+data:
+  elysium-industries.server: |
+    elysium.industries:53 {
+      forward . 192.168.30.15
+      errors
+      cache 30
+    }
