@@ -29,7 +29,7 @@ spec:
               capabilities:
                 drop: [ALL]
             env:
-              LIVEKIT_URL: ws://livekit.matrix.svc.cluster.local:7880
+              LIVEKIT_URL: wss://livekit.elysium.industries
               LIVEKIT_FULL_ACCESS_HOMESERVERS: "chat.elysium.industries"
               LIVEKIT_KEY:
                 valueFrom:
