@@ -43,6 +43,12 @@ config.set("Preferences", r"Downloads\TempPathEnabled", "true")
 # Bypass auth for localhost (Gluetun port sync uses localhost API)
 config.set("Preferences", r"WebUI\LocalHostAuth", "false")
 
+# Connection and upload slot tuning (sized for ~35 Mbps VPN upload)
+# Formula: global upload slots ≈ upload_KB/s ÷ 10, per-torrent = global / active torrents
+config.set("BitTorrent", r"Session\MaxUploads", "50")
+config.set("BitTorrent", r"Session\MaxUploadsPerTorrent", "10")
+config.set("BitTorrent", r"Session\MaxConnectionsPerTorrent", "40")
+
 with open(conf, "w") as f:
     config.write(f, space_around_delimiters=False)
 
