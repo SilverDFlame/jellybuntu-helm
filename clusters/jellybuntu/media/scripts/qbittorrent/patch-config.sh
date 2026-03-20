@@ -49,6 +49,11 @@ config.set("BitTorrent", r"Session\MaxUploads", "50")
 config.set("BitTorrent", r"Session\MaxUploadsPerTorrent", "10")
 config.set("BitTorrent", r"Session\MaxConnectionsPerTorrent", "40")
 
+# Torrent queueing (sized for ~125 Mbps VPN download, NFS-backed storage)
+config.set("BitTorrent", r"Session\MaxActiveDownloads", "8")
+config.set("BitTorrent", r"Session\MaxActiveUploads", "25")
+config.set("BitTorrent", r"Session\MaxActiveTorrents", "35")
+
 with open(conf, "w") as f:
     config.write(f, space_around_delimiters=False)
 
